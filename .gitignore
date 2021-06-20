@@ -1,0 +1,6 @@
+src/*.ipynb
+data/**/*.npy
+data/**/*.nii.gz
+data/simulating_lowdose_PET.ipynb
+ckpt/*.pth
+**/.ipynb_checkpoints
