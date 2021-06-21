@@ -241,5 +241,4 @@ def train_i2i_Cas_UNet3headGAN(
 #     num_epochs=50,
 #     init_lr=1e-5,
 #     ckpt_path='../ckpt/uncorr2CT_Cas_UNet3headGAN_v1_block3',
-#     noise_sigma=0.0
 # )

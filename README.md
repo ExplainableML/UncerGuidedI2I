@@ -1,6 +1,7 @@
 # UncerGuidedI2I
-Uncertainty Guided Progressive GANs for Medical Image Translation
+PyTorch imeplementation of Uncertainty Guided Progressive GANs for Medical Image Translation
 
+## Introduction
 ![](./UncerGuidedI2I_Model.gif)
 
 This repository provides the code for the MICCAI-2021 paper "Uncertainty-guided Progressive GANs for Medical Image Translation". 
@@ -20,9 +21,10 @@ root
     |-losses.py
 ```
 
-## How to use
+## Getting started
 ### Requirements
 ```
+python >= 3.6.10
 pytorch > 1.6.0
 torchio
 scikit-image
@@ -30,12 +32,12 @@ scikit-learn
 ```
 
 ### Preparing Datasets
-The experiments of the paper used T1 MRI scans from the IXI dataset and a propietary PET/CT dataset.
+The experiments of the paper used T1 MRI scans from the IXI dataset and a proprietary PET/CT dataset.
 
 `data/IXI/` has jupyter notebooks to prepare the data for motion correction as well as undersampled MRI reconstruction.
 For custom datasets, use the above notebooks as example to prepare the dataset and place them under `data/`. The dataset class in `src/ds.py` loads the paired set of images (corrupted and the non-corrupted version).
 
-### Training
+### Learning models with uncertainty
 `src/networks.py` provides the generator and discriminator architectures.
 
 `src/utils.py` provides two training APIs `train_i2i_UNet3headGAN` and `train_i2i_Cas_UNet3headGAN`. The first API is to be used to train the primary GAN, whereas the second API is to be used to train the subsequent GANs. 
@@ -51,16 +53,18 @@ netG_A, netD_A = train_i2i_UNet3headGAN(
     device='cuda',
     num_epochs=50,
     init_lr=1e-5,
-    ckpt_path='../ckpt/i2i_UNet3headGAN',
+    ckpt_path='../ckpt/i2i_0_UNet3headGAN',
 )
 ```
+This will save checkpoints in `../ckpt/` named as `i2i_0_UNet3headGAN_eph*.pth`
 
-An example command to use the first API is:
+An example command to use the second API (here we assumed the primary GAN and first subsequent GAN are trained already):
 ```python
+# first load the prior GAN modules 
 netG_A1 = CasUNet_3head(1,1)
-netG_A1.load_state_dict(torch.load('../ckpt/uncorr2CT_UNet3headGAN_v1_eph78_G_A.pth'))
+netG_A1.load_state_dict(torch.load('../ckpt/i2i_0_UNet3headGAN_eph49_G_A.pth'))
 netG_A2 = UNet_3head(4,1)
-netG_A2.load_state_dict(torch.load('../ckpt/uncorr2CT_Cas_UNet3headGAN_v1_eph149_G_A.pth'))
+netG_A2.load_state_dict(torch.load('../ckpt/i2i_1_UNet3headGAN_eph49_G_A.pth'))
 netG_A3 = UNet_3head(4,1)
 
 netD_A = NLayerDiscriminator(1, n_layers=4)
@@ -71,7 +75,27 @@ list_netG_A, list_netD_A = train_uncorr2CT_Cas_UNet3headGAN(
     device='cuda',
     num_epochs=50,
     init_lr=1e-5,
-    ckpt_path='../ckpt/uncorr2CT_Cas_UNet3headGAN_v1_block3',
-    noise_sigma=0.0
+    ckpt_path='../ckpt/i2i_2_UNet3headGAN',
 )
+```
+
+### Citations
+If you find the bits from this project helpful, please cite the following works:
+```
+@inproceedings{upadhyay2021uncerguidedi2i,
+  title={Uncertainty Guided Progressive GANs for Medical Image Translation},
+  author={Upadhyay, Uddeshya and Chen, Yanbei and Hebb, Tobias and Gatidis, Sergios and Akata, Zeynep},
+  booktitle={International Conference on Medical Image Computing and Computer-Assisted Intervention (MICCAI)},
+  year={2021},
+  organization={Springer}
+}
+```
+and
+```
+@article{upadhyay2021uncertainty,
+  title={Uncertainty-aware Generalized Adaptive CycleGAN},
+  author={Upadhyay, Uddeshya and Chen, Yanbei and Akata, Zeynep},
+  journal={arXiv preprint arXiv:2102.11747},
+  year={2021}
+}
 ```
