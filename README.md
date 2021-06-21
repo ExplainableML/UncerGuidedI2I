@@ -1,11 +1,11 @@
 # UncerGuidedI2I
-PyTorch imeplementation of Uncertainty Guided Progressive GANs for Medical Image Translation
+[PyTorch](https://pytorch.org/) imeplementation of [Uncertainty Guided Progressive GANs for Medical Image Translation]()
 
 ## Introduction
 ![](./UncerGuidedI2I_Model.gif)
 
-This repository provides the code for the MICCAI-2021 paper "Uncertainty-guided Progressive GANs for Medical Image Translation". 
-We take inspiration from the progressive learning scheme demonstrated at MedGAN and Progressive GANs, and augment the learning with the estimation of intermediate uncertainty maps, that are used as attention map to focus the image translation in poorly constructed (highly uncertain) regions, progressively improving the images over multiple phases.
+This repository provides the code for the **MICCAI-2021** paper titled "[Uncertainty-guided Progressive GANs for Medical Image Translation]()". 
+We take inspiration from the progressive learning scheme demonstrated at [MedGAN]() and [Progressive GANs](), and augment the learning with the estimation of intermediate uncertainty maps, that are used as attention map to focus the image translation in poorly generated (highly uncertain) regions, progressively improving the images over multiple phases.
 
 ![](./UncerGuidedI2I_res.gif)
 
@@ -25,7 +25,8 @@ root
 ### Requirements
 ```
 python >= 3.6.10
-pytorch > 1.6.0
+pytorch >= 1.6.0
+jupyter lab
 torchio
 scikit-image
 scikit-learn
@@ -34,7 +35,7 @@ scikit-learn
 ### Preparing Datasets
 The experiments of the paper used T1 MRI scans from the IXI dataset and a proprietary PET/CT dataset.
 
-`data/IXI/` has jupyter notebooks to prepare the data for motion correction as well as undersampled MRI reconstruction.
+`data/IXI/` has jupyter notebooks and scripts to prepare the data for motion correction (`data/IXI/prepare_motion_correction_data.py` and `data/IXI/viz_motion_correction_data.ipynb`) as well as undersampled MRI reconstruction (`data/IXI/viz_kspace_undersample_data.ipynb`).
 For custom datasets, use the above notebooks as example to prepare the dataset and place them under `data/`. The dataset class in `src/ds.py` loads the paired set of images (corrupted and the non-corrupted version).
 
 ### Learning models with uncertainty
@@ -60,14 +61,17 @@ This will save checkpoints in `../ckpt/` named as `i2i_0_UNet3headGAN_eph*.pth`
 
 An example command to use the second API (here we assumed the primary GAN and first subsequent GAN are trained already):
 ```python
-# first load the prior GAN modules 
+# first load the prior Generators 
 netG_A1 = CasUNet_3head(1,1)
 netG_A1.load_state_dict(torch.load('../ckpt/i2i_0_UNet3headGAN_eph49_G_A.pth'))
 netG_A2 = UNet_3head(4,1)
 netG_A2.load_state_dict(torch.load('../ckpt/i2i_1_UNet3headGAN_eph49_G_A.pth'))
-netG_A3 = UNet_3head(4,1)
 
+#initialize the current GAN
+netG_A3 = UNet_3head(4,1)
 netD_A = NLayerDiscriminator(1, n_layers=4)
+
+#train the cascaded framework
 list_netG_A, list_netD_A = train_uncorr2CT_Cas_UNet3headGAN(
     [netG_A1, netG_A2, netG_A3], [netD_A],
     train_loader, test_loader,
@@ -79,7 +83,7 @@ list_netG_A, list_netD_A = train_uncorr2CT_Cas_UNet3headGAN(
 )
 ```
 
-### Citations
+### Bibtex
 If you find the bits from this project helpful, please cite the following works:
 ```
 @inproceedings{upadhyay2021uncerguidedi2i,
