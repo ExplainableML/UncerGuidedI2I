@@ -2,12 +2,12 @@
 [PyTorch](https://pytorch.org/) imeplementation of [Uncertainty Guided Progressive GANs for Medical Image Translation]()
 
 ## Introduction
-![](./UncerGuidedI2I_Model.gif)
+![](./data/UncerGuidedI2I_Model.gif)
 
 This repository provides the code for the **MICCAI-2021** paper titled "[Uncertainty-guided Progressive GANs for Medical Image Translation]()". 
-We take inspiration from the progressive learning scheme demonstrated at [MedGAN]() and [Progressive GANs](), and augment the learning with the estimation of intermediate uncertainty maps, that are used as attention map to focus the image translation in poorly generated (highly uncertain) regions, progressively improving the images over multiple phases.
+We take inspiration from the progressive learning scheme demonstrated at [MedGAN](https://arxiv.org/abs/1806.06397) and [Progressive GANs](https://arxiv.org/abs/1710.10196), and augment the learning with the estimation of intermediate uncertainty maps (as presented [here](http://www.gatsby.ucl.ac.uk/~balaji/udl2020/accepted-papers/UDL2020-paper-061.pdf) and [here](https://arxiv.org/pdf/2102.11747.pdf)), that are used as attention map to focus the image translation in poorly generated (highly uncertain) regions, progressively improving the images over multiple phases.
 
-![](./UncerGuidedI2I_res.gif)
+![](./data/UncerGuidedI2I_res.gif)
 
 The structure of the repository is as follows:
 ```
